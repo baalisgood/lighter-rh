@@ -1,0 +1,17 @@
+# Lighter on Robinhood Chain (https://robinhoodchain.lighter.xyz)
+# 复制为 config/exchanges/lighter_rh_config.yaml；凭据优先读取 .env 中的 LIGHTER_RH_* 变量。
+# 注意：RH 是独立交易所，账户/API Key/nonce/market_id 都不与 Lighter 主网通用；
+#      API Key 索引 0-3 与 157 为保留值，请使用 4-156 或 158-254。抵押品为 USDG（系统内仍按 USDC 计价）。
+exchange_id: lighter_rh
+api_config:
+  testnet: false
+  api_url: https://api.rh.lighter.xyz
+  ws_mainnet_url: wss://api.rh.lighter.xyz/stream
+  auth:
+    enabled: true
+    api_key_private_key: ''
+    account_index: ''
+    api_key_index: ''
+extra_params:
+  strict_order_state: true
+  chain_id: 466324

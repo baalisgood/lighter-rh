@@ -1,0 +1,11 @@
+enabled_symbols:
+- MU-USDC-PERP
+- SNDK-USDC-PERP
+- AMD-USDC-PERP
+- NVDA-USDC-PERP
+- INTC-USDC-PERP
+- SPCX-USDC-PERP
+enabled_exchanges:
+- lighter
+- arcus
+allow_single_exchange: false

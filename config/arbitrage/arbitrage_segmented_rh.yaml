@@ -1,0 +1,516 @@
+# Lighter 主网 (taker 对冲) <-> Lighter Robinhood Chain (maker 挂单)。金额/限额均为配置项。
+system_mode:
+  monitor_only: true
+  data_freshness_seconds: 2.5
+  bootstrap_positions_on_startup: true
+  bootstrap_positions_block_open_until_success: true
+  bootstrap_positions_fetch_timeout_seconds: 30
+  bootstrap_positions_retry_interval_seconds: 10
+  bootstrap_positions_retry_max_attempts: 5
+  bootstrap_positions_empty_confirm_attempts: 10
+  bootstrap_positions_empty_confirm_interval_seconds: 1
+  bootstrap_positions_block_open_on_mismatch: true
+  bootstrap_positions_qty_tolerance: 0
+  stock_profile: true
+decision:
+  deduct_fees: true
+  exchange_fee_config:
+    default:
+      limit_fee_rate: 0
+      market_fee_rate: 0
+    lighter:
+      limit_fee_rate: 0
+      market_fee_rate: 0
+    lighter_rh:
+      limit_fee_rate: 0
+      market_fee_rate: 0
+  exchange_order_modes:
+    lighter_rh:
+      order_mode: limit
+      priority: 2
+      maker_mode: true
+      post_only: true
+      maker_price_mode: join
+      maker_cancel_adverse_pct: 0.0002
+      maker_poll_interval_seconds: 1.0
+      maker_hedge_partial_fill: true
+      hedge_max_slippage_pct: 0.0005
+      limit_price_offset_pct: 0
+      limit_price_offset_conservative_pct: 0.0
+      use_tick_precision: false
+      tick_offset_steps: 1
+      force_sequential_limit: false
+    lighter:
+      order_mode: market
+      priority: 1
+      limit_price_offset_pct: 0.001
+      limit_price_offset_conservative_pct: 0.0
+      use_tick_precision: false
+      force_sequential_limit: false
+      force_limit_when_second_leg: false
+      reuse_signal_price_when_second_leg: false
+      smart_second_leg_price: true
+    default:
+      order_mode: market
+      priority: 0
+risk_control:
+  balance_management:
+    min_balance_warning: 4000.0
+    min_balance_close_position: 3000.0
+    force_close_mode: grid_sequential
+    check_interval: 10
+    sound_alarm_enabled: true
+    equity_gap_alert_enabled: true
+    equity_gap_alert_threshold_usdc: 1000
+    equity_gap_alert_interval_seconds: 300
+  open_only_close:
+    low_balance:
+      enabled: true
+      min_equity_usdc: 4000.0
+      sound_alarm_enabled: true
+      min_equity_usdc_by_exchange: {}
+    max_exchange_position_value:
+      enabled: true
+      max_value_usdc: 4500.0
+      sound_alarm_enabled: false
+      max_value_usdc_by_exchange: {}
+    dynamic_max_exchange_position_value:
+      enabled: true
+      equity_multiplier: 1.0
+    price_volatility:
+      trigger_symbols:
+      - MU
+      - SNDK
+      - AMD
+      - NVDA
+      - INTC
+      - SPCX
+      - BTC
+      - ETH
+      - SOL
+      - HYPE
+      enabled: true
+      window_seconds: 300
+      threshold_pct: 4
+      block_seconds: 900
+      apply_to_all_symbols: true
+      sound_alarm_enabled: true
+  execution_pause:
+    enabled: true
+    consecutive_failures: 3
+    pause_minutes: 45
+  slippage_pause:
+    enabled: true
+    negative_slippage_threshold_pct: 0.08
+    pause_seconds: 900
+    cooldown_seconds: 60
+    apply_to_open: true
+    apply_to_close: true
+    burst_negative_slippage_pause:
+      enabled: true
+      window_seconds: 180
+      count_threshold: 5
+    high_slippage_reconnect:
+      enabled: false
+      window_trades: 10
+      count_threshold: 5
+      high_slippage_threshold_pct: 0.01
+      cooldown_seconds: 300
+  api_failure_pause:
+    enabled: false
+    consecutive_failures: 10
+    min_interval_seconds: 30
+    window_seconds: 600
+    pause_seconds: 900
+  order_ws_latency_pause:
+    enabled: true
+    threshold_seconds: 3.2
+    pause_seconds: 1000
+    block_position_alignment_auto_fix: false
+  position_alignment_auto_fix:
+    enabled: false
+    cooldown_seconds: 15
+    max_executions_per_window: 3
+    window_seconds: 14400
+  position_mismatch_pause:
+    enabled: true
+    mismatch_seconds: 10
+order_execution:
+  limit_order_timeout: 10
+  lighter_market_order_timeout: 10
+  max_retry_count: 3
+default_config:
+  grid_config:
+    initial_spread_threshold: 0.12
+    grid_step: 0.07
+    max_segments: 3
+    scalping_enabled: false
+    scalping_trigger_segment: 10
+    scalping_profit_threshold: 0.02
+    use_symmetric_close: true
+    profit_per_segment: 0.07
+    scalp_profit_threshold: 0.02
+    spread_persistence_seconds: 2
+    strict_persistence_check: true
+    require_orderbook_liquidity: true
+    min_orderbook_quantity: null
+    orderbook_aggregate_levels: 3
+    skip_orderbook_liquidity_exchanges:
+    - lighter_rh
+    slippage_tolerance: 0.0001
+    price_stability_window_seconds: 2
+    price_stability_threshold_pct: 0.05
+    max_local_orderbook_spread_pct: 0.05
+    ema_spread_gate_enabled: false
+    ema_spread_window_seconds: 6
+    ema_spread_deviation_pct: 0.011
+    ema_spread_strict_samples_per_second: true
+    first_close_ratio: 0.5
+    basis_config:
+      enabled: true
+      ema_seconds: 3600
+      warmup_seconds: 3600
+      drift_seconds: 3600
+      max_drift_pct: 0.1
+      max_gap_seconds: 3
+      recovery_seconds: 60
+      reset_after_seconds: 600
+      checkpoint_interval_seconds: 60
+      funding_budget_enabled: true
+      funding_horizon_hours: 1
+      funding_max_age_seconds: 300
+    stock_session:
+      offhours_threshold_pct: 0.18
+      calendar_valid_years:
+      - 2026
+      - 2027
+      closed_dates:
+      - '2026-01-01'
+      - '2026-01-19'
+      - '2026-02-16'
+      - '2026-04-03'
+      - '2026-05-25'
+      - '2026-06-19'
+      - '2026-07-03'
+      - '2026-09-07'
+      - '2026-11-26'
+      - '2026-12-25'
+      - '2027-01-01'
+      - '2027-01-18'
+      - '2027-02-15'
+      - '2027-03-26'
+      - '2027-05-31'
+      - '2027-06-18'
+      - '2027-07-05'
+      - '2027-09-06'
+      - '2027-11-25'
+      - '2027-12-24'
+      early_closes:
+        '2026-11-27': '13:00'
+        '2026-12-24': '13:00'
+        '2027-11-26': '13:00'
+      closed_overrides: []
+  quantity_config:
+    base_quantity: 1.0
+    quantity_mode: value
+    target_value_usdc: 500
+    quantity_precision: 4
+    min_exchange_order_qty:
+      default: 0.0
+    split_order_amount_usdc: 250
+  risk_config:
+    max_position_value: 1500.0
+    max_loss_percent: 2.0
+    enable_funding_rate_risk: true
+    max_unfavorable_funding_hours: 8
+    funding_rate_diff_threshold: 0.01
+symbol_configs:
+  MU-USDC-PERP:
+    enabled: true
+    grid_config:
+      initial_spread_threshold: 0.12
+      grid_step: 0.07
+      max_segments: 3
+      profit_per_segment: 0.07
+      slippage_tolerance: 0.0001
+      require_orderbook_liquidity: true
+      min_orderbook_quantity: null
+    quantity_config:
+      base_quantity: 0.57
+      quantity_mode: value
+      quantity_precision: 4
+      target_value_usdc: 500
+      min_exchange_order_qty:
+        default: 0.01
+        lighter: 0.006
+        lighter_rh: 0.01
+      split_order_amount_usdc: 250
+    risk_config:
+      max_position_value: 1500.0
+  SNDK-USDC-PERP:
+    enabled: true
+    grid_config:
+      initial_spread_threshold: 0.12
+      grid_step: 0.07
+      max_segments: 3
+      profit_per_segment: 0.07
+      slippage_tolerance: 0.0001
+      require_orderbook_liquidity: true
+      min_orderbook_quantity: null
+    quantity_config:
+      base_quantity: 0.372
+      quantity_mode: value
+      quantity_precision: 4
+      target_value_usdc: 500
+      min_exchange_order_qty:
+        default: 0.01
+        lighter: 0.0035
+        lighter_rh: 0.01
+      split_order_amount_usdc: 250
+    risk_config:
+      max_position_value: 1500.0
+  AMD-USDC-PERP:
+    enabled: true
+    grid_config:
+      initial_spread_threshold: 0.12
+      grid_step: 0.07
+      max_segments: 3
+      profit_per_segment: 0.07
+      slippage_tolerance: 0.0001
+      require_orderbook_liquidity: true
+      min_orderbook_quantity: null
+    quantity_config:
+      base_quantity: 0.898
+      quantity_mode: value
+      quantity_precision: 4
+      target_value_usdc: 500
+      min_exchange_order_qty:
+        default: 0.03
+        lighter: 0.01
+        lighter_rh: 0.03
+      split_order_amount_usdc: 250
+    risk_config:
+      max_position_value: 1500.0
+  NVDA-USDC-PERP:
+    enabled: true
+    grid_config:
+      initial_spread_threshold: 0.12
+      grid_step: 0.07
+      max_segments: 3
+      profit_per_segment: 0.07
+      slippage_tolerance: 0.0001
+      require_orderbook_liquidity: true
+      min_orderbook_quantity: null
+    quantity_config:
+      base_quantity: 2.29
+      quantity_mode: value
+      quantity_precision: 3
+      target_value_usdc: 500
+      min_exchange_order_qty:
+        default: 0.04
+        lighter: 0.025
+        lighter_rh: 0.04
+      split_order_amount_usdc: 250
+    risk_config:
+      max_position_value: 1500.0
+  INTC-USDC-PERP:
+    enabled: true
+    grid_config:
+      initial_spread_threshold: 0.12
+      grid_step: 0.07
+      max_segments: 3
+      profit_per_segment: 0.07
+      slippage_tolerance: 0.0001
+      require_orderbook_liquidity: true
+      min_orderbook_quantity: null
+    quantity_config:
+      base_quantity: 5.234
+      quantity_mode: value
+      quantity_precision: 3
+      target_value_usdc: 500
+      min_exchange_order_qty:
+        default: 0.055
+        lighter: 0.055
+        lighter_rh: 0.05
+      split_order_amount_usdc: 250
+    risk_config:
+      max_position_value: 1500.0
+  SPCX-USDC-PERP:
+    enabled: true
+    grid_config:
+      initial_spread_threshold: 0.12
+      grid_step: 0.07
+      max_segments: 3
+      profit_per_segment: 0.07
+      slippage_tolerance: 0.0001
+      require_orderbook_liquidity: true
+      min_orderbook_quantity: null
+    quantity_config:
+      base_quantity: 3.3632
+      quantity_mode: value
+      quantity_precision: 4
+      target_value_usdc: 500
+      min_exchange_order_qty:
+        default: 0.04
+        lighter: 0.035
+        lighter_rh: 0.04
+      split_order_amount_usdc: 250
+    risk_config:
+      max_position_value: 1500.0
+  BTC-USDC-PERP:
+    enabled: true
+    grid_config:
+      initial_spread_threshold: 0.05
+      grid_step: 0.03
+      max_segments: 3
+      profit_per_segment: 0.03
+      slippage_tolerance: 0.0001
+      require_orderbook_liquidity: true
+      min_orderbook_quantity: null
+      stock_session:
+        enabled: false
+    quantity_config:
+      base_quantity: 0.00609
+      quantity_mode: value
+      quantity_precision: 5
+      target_value_usdc: 500
+      min_exchange_order_qty:
+        default: 0.0002
+        lighter: 7.0e-05
+        lighter_rh: 0.0002
+      split_order_amount_usdc: 250
+    risk_config:
+      max_position_value: 1500.0
+  ETH-USDC-PERP:
+    enabled: true
+    grid_config:
+      initial_spread_threshold: 0.05
+      grid_step: 0.03
+      max_segments: 3
+      profit_per_segment: 0.03
+      slippage_tolerance: 0.0001
+      require_orderbook_liquidity: true
+      min_orderbook_quantity: null
+      stock_session:
+        enabled: false
+    quantity_config:
+      base_quantity: 0.2064
+      quantity_mode: value
+      quantity_precision: 4
+      target_value_usdc: 500
+      min_exchange_order_qty:
+        default: 0.005
+        lighter: 0.002
+        lighter_rh: 0.005
+      split_order_amount_usdc: 250
+    risk_config:
+      max_position_value: 1500.0
+  SOL-USDC-PERP:
+    enabled: true
+    grid_config:
+      initial_spread_threshold: 0.05
+      grid_step: 0.03
+      max_segments: 3
+      profit_per_segment: 0.03
+      slippage_tolerance: 0.0001
+      require_orderbook_liquidity: true
+      min_orderbook_quantity: null
+      stock_session:
+        enabled: false
+    quantity_config:
+      base_quantity: 4.813
+      quantity_mode: value
+      quantity_precision: 3
+      target_value_usdc: 500
+      min_exchange_order_qty:
+        default: 0.1
+        lighter: 0.055
+        lighter_rh: 0.1
+      split_order_amount_usdc: 250
+    risk_config:
+      max_position_value: 1500.0
+  HYPE-USDC-PERP:
+    enabled: true
+    grid_config:
+      initial_spread_threshold: 0.05
+      grid_step: 0.03
+      max_segments: 3
+      profit_per_segment: 0.03
+      slippage_tolerance: 0.0001
+      require_orderbook_liquidity: true
+      min_orderbook_quantity: null
+      stock_session:
+        enabled: false
+    quantity_config:
+      base_quantity: 6.32
+      quantity_mode: value
+      quantity_precision: 2
+      target_value_usdc: 500
+      min_exchange_order_qty:
+        default: 0.1
+        lighter: 0.07
+        lighter_rh: 0.1
+      split_order_amount_usdc: 250
+    risk_config:
+      max_position_value: 1500.0
+market_constraints:
+  MU:
+    quantity_step: '0.0001'
+    min_quantity: '0.01'
+    min_notional_by_exchange:
+      lighter: 10
+      lighter_rh: 10
+  SNDK:
+    quantity_step: '0.0001'
+    min_quantity: '0.01'
+    min_notional_by_exchange:
+      lighter: 10
+      lighter_rh: 10
+  AMD:
+    quantity_step: '0.0001'
+    min_quantity: '0.03'
+    min_notional_by_exchange:
+      lighter: 10
+      lighter_rh: 10
+  NVDA:
+    quantity_step: '0.001'
+    min_quantity: '0.04'
+    min_notional_by_exchange:
+      lighter: 10
+      lighter_rh: 10
+  INTC:
+    quantity_step: '0.001'
+    min_quantity: '0.1'
+    min_notional_by_exchange:
+      lighter: 10
+      lighter_rh: 10
+  SPCX:
+    quantity_step: '0.0001'
+    min_quantity: '0.04'
+    min_notional_by_exchange:
+      lighter: 10
+      lighter_rh: 10
+  BTC:
+    quantity_step: '0.00001'
+    min_quantity: '0.0002'
+    min_notional_by_exchange:
+      lighter: 10
+      lighter_rh: 10
+  ETH:
+    quantity_step: '0.0001'
+    min_quantity: '0.005'
+    min_notional_by_exchange:
+      lighter: 10
+      lighter_rh: 10
+  SOL:
+    quantity_step: '0.001'
+    min_quantity: '0.1'
+    min_notional_by_exchange:
+      lighter: 10
+      lighter_rh: 10
+  HYPE:
+    quantity_step: '0.01'
+    min_quantity: '0.1'
+    min_notional_by_exchange:
+      lighter: 10
+      lighter_rh: 10

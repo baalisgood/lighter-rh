@@ -1,0 +1,19 @@
+# Lighter 主网 (taker 对冲) <-> Lighter Robinhood Chain (maker 挂单)。金额/限额均为配置项。
+enabled: true
+mode: one_to_many
+allow_reverse: true
+min_spread_pct: null
+center_exchange: lighter
+counter_exchanges:
+- lighter_rh
+symbols:
+- MU-USDC-PERP
+- SNDK-USDC-PERP
+- AMD-USDC-PERP
+- NVDA-USDC-PERP
+- INTC-USDC-PERP
+- SPCX-USDC-PERP
+- BTC-USDC-PERP
+- ETH-USDC-PERP
+- SOL-USDC-PERP
+- HYPE-USDC-PERP

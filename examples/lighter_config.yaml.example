@@ -1,0 +1,10 @@
+exchange_id: lighter
+api_config:
+  testnet: false
+  auth:
+    enabled: true
+    api_key_private_key: ''
+    account_index: ''
+    api_key_index: ''
+extra_params:
+  strict_order_state: true

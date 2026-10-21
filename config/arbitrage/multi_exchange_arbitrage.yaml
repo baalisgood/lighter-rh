@@ -1,0 +1,15 @@
+# Stock pairs on the unchanged native trading engine. Amounts and limits are configuration only.
+enabled: true
+mode: one_to_many
+allow_reverse: true
+min_spread_pct: null
+center_exchange: lighter
+counter_exchanges:
+- arcus
+symbols:
+- MU-USDC-PERP
+- SNDK-USDC-PERP
+- AMD-USDC-PERP
+- NVDA-USDC-PERP
+- INTC-USDC-PERP
+- SPCX-USDC-PERP

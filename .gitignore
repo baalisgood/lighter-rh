@@ -1,0 +1,52 @@
+# Local handoff and private notes, at any depth (case insensitive).
+[Hh][Aa][Nn][Dd][Oo][Ff][Ff]*
+[Hh][Aa][Nn][Dd][Oo][Vv][Ee][Rr]*
+*交接*
+.public-release/
+
+# Credentials and authentication configuration.
+.[Ee][Nn][Vv]*
+config/exchanges/
+[Kk][Ee][Yy][Ss]/
+[Kk][Ee][Yy][Ss].*
+[Cc][Ee][Rr][Tt][Ss]/
+[Cc][Ee][Rr][Tt][Ss].*
+[Cc][Ee][Rr][Tt][Ii][Ff][Ii][Cc][Aa][Tt][Ee][Ss]/
+*[Cc][Rr][Ee][Dd][Ee][Nn][Tt][Ii][Aa][Ll]*
+*[Ss][Ee][Cc][Rr][Ee][Tt]*
+*[Pp][Rr][Ii][Vv][Aa][Tt][Ee][_-][Kk][Ee][Yy]*
+*[Pp][Rr][Ii][Vv][Aa][Tt][Ee][Kk][Ee][Yy]*
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.cer
+
+# Local runtime data and generated artifacts.
+/logs/
+/data/
+/run/
+/backups/
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.cache/
+cache/
+/outputs/
+/archives/
+.DS_Store
+*.bak
+*.backup*
+*.log
+*.db
+*.sqlite*
+*.tar*
+*.zip
+*.gz
+
+# Empty public credential template only.
+!.env.example

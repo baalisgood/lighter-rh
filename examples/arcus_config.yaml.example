@@ -1,0 +1,6 @@
+arcus:
+  authentication:
+    wallet_address: ''
+    api_key: ''
+    api_signing_key: ''
+    account_index: ''
